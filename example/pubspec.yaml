@@ -1,0 +1,20 @@
+name: wave_screen_example
+description: Example app for the wave_screen package.
+publish_to: none
+
+environment:
+  sdk: ^3.11.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  wave_screen:
+    path: ..
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
