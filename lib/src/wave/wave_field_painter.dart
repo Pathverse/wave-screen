@@ -24,12 +24,24 @@ class WaveFieldPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final t = clock.value;
     final activeShader = shader;
-    if (activeShader != null) {
-      WaveUniforms.apply(activeShader, size: size, waves: waves, t: t);
-      canvas.drawRect(Offset.zero & size, Paint()..shader = activeShader);
+    if (activeShader != null && _paintShader(canvas, size, t, activeShader)) {
       return;
     }
     _paintCpuFallback(canvas, size, t);
+  }
+
+  /// Paints via the GPU shader. Returns `false` (so the caller falls back to the
+  /// CPU path) if the shader's uniform layout does not match what we write —
+  /// e.g. a stale compiled shader from an older uniform layout. Degrading is far
+  /// better than crash-flooding every frame.
+  bool _paintShader(Canvas canvas, Size size, double t, ui.FragmentShader s) {
+    try {
+      WaveUniforms.apply(s, size: size, waves: waves, t: t);
+    } on Error {
+      return false;
+    }
+    canvas.drawRect(Offset.zero & size, Paint()..shader = s);
+    return true;
   }
 
   void _paintCpuFallback(Canvas canvas, Size size, double t) {
