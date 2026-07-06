@@ -5,7 +5,7 @@ import 'package:wave_screen/wave_screen.dart';
 /// The foundation preset library and the inline `WaveScreen.custom` builder.
 void main() {
   test('every foundation preset is a valid layered background', () {
-    expect(WavePresets.all.length, 3);
+    expect(WavePresets.all.length, greaterThanOrEqualTo(10));
     for (final preset in WavePresets.all) {
       expect(preset.waves, isNotEmpty);
       // Must fit within the shader's MAX_LAYERS budget.
