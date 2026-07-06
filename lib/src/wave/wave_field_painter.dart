@@ -2,20 +2,24 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/widgets.dart';
 
+import 'ripple_field.dart';
 import 'shader/wave_uniforms.dart';
 import 'wave.dart';
 
 /// Paints composited wave layers each frame, driven by [clock]. Uses the GPU
 /// [shader] when available and a CPU path otherwise, so the surface never blanks.
+/// An optional [rippleField] adds pointer-driven displacement to every layer.
 class WaveFieldPainter extends CustomPainter {
   final List<Wave> waves;
   final ValueNotifier<double> clock;
   final ui.FragmentShader? shader;
+  final RippleField? rippleField;
 
   WaveFieldPainter({
     required this.waves,
     required this.clock,
     required this.shader,
+    this.rippleField,
   }) : super(repaint: clock);
 
   static const int _cpuSamples = 96;
@@ -36,7 +40,13 @@ class WaveFieldPainter extends CustomPainter {
   /// better than crash-flooding every frame.
   bool _paintShader(Canvas canvas, Size size, double t, ui.FragmentShader s) {
     try {
-      WaveUniforms.apply(s, size: size, waves: waves, t: t);
+      WaveUniforms.apply(
+        s,
+        size: size,
+        waves: waves,
+        t: t,
+        rippleField: rippleField,
+      );
     } on Error {
       return false;
     }
@@ -45,12 +55,14 @@ class WaveFieldPainter extends CustomPainter {
   }
 
   void _paintCpuFallback(Canvas canvas, Size size, double t) {
+    final ripple = rippleField;
     for (final wave in waves) {
       final baseline = wave.shape.baseline;
       final path = Path()..moveTo(0, size.height);
       for (var s = 0; s <= _cpuSamples; s++) {
         final x = s / _cpuSamples;
-        final crest = (baseline + wave.heightAt(x, t)) * size.height;
+        final displacement = ripple?.displacementAt(x, t) ?? 0.0;
+        final crest = (baseline + wave.heightAt(x, t) + displacement) * size.height;
         path.lineTo(x * size.width, crest);
       }
       path
@@ -67,5 +79,7 @@ class WaveFieldPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant WaveFieldPainter oldDelegate) =>
-      oldDelegate.waves != waves || oldDelegate.shader != shader;
+      oldDelegate.waves != waves ||
+      oldDelegate.shader != shader ||
+      oldDelegate.rippleField != rippleField;
 }
