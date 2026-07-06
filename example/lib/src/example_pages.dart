@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'pages/foundation_page.dart';
+import 'pages/interaction_page.dart';
 import 'pages/shapes_page.dart';
 
 /// One entry in the example's milestone gallery. Each milestone appends its own
@@ -33,5 +34,11 @@ final List<ExamplePage> examplePages = <ExamplePage>[
     icon: Icons.blur_on_outlined,
     selectedIcon: Icons.blur_on,
     builder: (_) => const ShapesPage(),
+  ),
+  ExamplePage(
+    label: 'Interaction',
+    icon: Icons.touch_app_outlined,
+    selectedIcon: Icons.touch_app,
+    builder: (_) => const InteractionPage(),
   ),
 ];
