@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'pages/foundation_page.dart';
+import 'pages/shapes_page.dart';
 
 /// One entry in the example's milestone gallery. Each milestone appends its own
 /// [ExamplePage] here, so the navigation grows without touching the shell.
@@ -26,5 +27,11 @@ final List<ExamplePage> examplePages = <ExamplePage>[
     icon: Icons.waves_outlined,
     selectedIcon: Icons.waves,
     builder: (_) => const FoundationPage(),
+  ),
+  ExamplePage(
+    label: 'Shapes',
+    icon: Icons.blur_on_outlined,
+    selectedIcon: Icons.blur_on,
+    builder: (_) => const ShapesPage(),
   ),
 ];
