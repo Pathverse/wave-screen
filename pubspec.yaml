@@ -1,6 +1,6 @@
 name: wave_screen
-description: "Animated Flutter wave surfaces for standalone waves, layered screens, and geometry-aware skeleton loading states."
-version: 0.0.1
+description: "Composable, GPU-shader-driven animated wave surfaces for Flutter — build a Wave from swappable shape, style, and motion traits."
+version: 0.1.0
 homepage: https://github.com/Pathverse/wave-screen
 repository: https://github.com/Pathverse/wave-screen
 issue_tracker: https://github.com/Pathverse/wave-screen/issues
@@ -12,7 +12,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  skeletonizer: ^2.1.3
 
 dev_dependencies:
   flutter_test:
@@ -25,3 +24,5 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   uses-material-design: true
+  shaders:
+    - shaders/wave.frag

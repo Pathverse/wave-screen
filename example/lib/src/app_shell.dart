@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'pages/ping_pong_skeletonizer_page.dart';
-import 'pages/skeletonizer_page.dart';
-import 'pages/waves_page.dart';
+import 'example_pages.dart';
 
-enum ExampleDestination { waves, skeletonizer, pingPong }
-
+/// Hosts the milestone showcase pages. Navigation is derived from
+/// [examplePages]; a single page renders on its own, and destinations appear
+/// once a later milestone appends more pages.
 class ExampleAppShell extends StatefulWidget {
   const ExampleAppShell({super.key});
 
@@ -14,42 +13,24 @@ class ExampleAppShell extends StatefulWidget {
 }
 
 class _ExampleAppShellState extends State<ExampleAppShell> {
-  ExampleDestination _destination = ExampleDestination.waves;
+  int _index = 0;
+
+  void _select(int index) => setState(() => _index = index);
 
   @override
   Widget build(BuildContext context) {
-    final destinations = const [
-      NavigationDestination(
-        icon: Icon(Icons.waves_outlined),
-        selectedIcon: Icon(Icons.waves),
-        label: 'Waves',
-      ),
-      NavigationDestination(
-        icon: Icon(Icons.view_agenda_outlined),
-        selectedIcon: Icon(Icons.view_agenda),
-        label: 'Skeletonizer',
-      ),
-      NavigationDestination(
-        icon: Icon(Icons.swap_horiz_outlined),
-        selectedIcon: Icon(Icons.swap_horiz),
-        label: 'Ping Pong',
-      ),
-    ];
-
-    final pages = [
-      const WavesPage(),
-      const SkeletonizerPage(),
-      const PingPongSkeletonizerPage(),
-    ];
+    final pages = examplePages;
+    final hasNav = pages.length >= 2;
 
     return LayoutBuilder(
       builder: (context, constraints) {
         final isWide = constraints.maxWidth >= 900;
+        final body = pages[_index].builder(context);
 
         return Scaffold(
           backgroundColor: const Color(0xFF111324),
           body: SafeArea(
-            child: isWide
+            child: hasNav && isWide
                 ? Row(
                     children: [
                       Padding(
@@ -57,50 +38,42 @@ class _ExampleAppShellState extends State<ExampleAppShell> {
                         child: NavigationRail(
                           backgroundColor: const Color(0x12000000),
                           indicatorColor: const Color(0xFF3A34C7),
-                          selectedIndex: _destination.index,
+                          selectedIndex: _index,
                           onDestinationSelected: _select,
                           labelType: NavigationRailLabelType.all,
-                          destinations: const [
-                            NavigationRailDestination(
-                              icon: Icon(Icons.waves_outlined),
-                              selectedIcon: Icon(Icons.waves),
-                              label: Text('Waves'),
-                            ),
-                            NavigationRailDestination(
-                              icon: Icon(Icons.view_agenda_outlined),
-                              selectedIcon: Icon(Icons.view_agenda),
-                              label: Text('Skeletonizer'),
-                            ),
-                            NavigationRailDestination(
-                              icon: Icon(Icons.swap_horiz_outlined),
-                              selectedIcon: Icon(Icons.swap_horiz),
-                              label: Text('Ping Pong'),
-                            ),
+                          destinations: [
+                            for (final page in pages)
+                              NavigationRailDestination(
+                                icon: Icon(page.icon),
+                                selectedIcon: Icon(page.selectedIcon),
+                                label: Text(page.label),
+                              ),
                           ],
                         ),
                       ),
-                      Expanded(child: pages[_destination.index]),
+                      Expanded(child: body),
                     ],
                   )
-                : pages[_destination.index],
+                : body,
           ),
-          bottomNavigationBar: isWide
-              ? null
-              : NavigationBar(
+          bottomNavigationBar: hasNav && !isWide
+              ? NavigationBar(
                   backgroundColor: const Color(0xFF171A31),
                   indicatorColor: const Color(0xFF3A34C7),
-                  selectedIndex: _destination.index,
+                  selectedIndex: _index,
                   onDestinationSelected: _select,
-                  destinations: destinations,
-                ),
+                  destinations: [
+                    for (final page in pages)
+                      NavigationDestination(
+                        icon: Icon(page.icon),
+                        selectedIcon: Icon(page.selectedIcon),
+                        label: page.label,
+                      ),
+                  ],
+                )
+              : null,
         );
       },
     );
-  }
-
-  void _select(int index) {
-    setState(() {
-      _destination = ExampleDestination.values[index];
-    });
   }
 }

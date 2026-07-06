@@ -1,24 +1,102 @@
-# wave-screen
+# wave_screen
 
 [![Deploy Example To GitHub Pages](https://github.com/Pathverse/wave-screen/actions/workflows/deploy-example-pages.yml/badge.svg)](https://github.com/Pathverse/wave-screen/actions/workflows/deploy-example-pages.yml)
 
-`wave_screen` is a Flutter package for animated wave-driven UI surfaces. It currently exports three main pieces:
+`wave_screen` renders **composable, GPU-shader-driven animated wave surfaces** for
+Flutter. A `Wave` is built from swappable traits — a **shape** (geometry), a
+**style** (appearance), a **motion** (time evolution), and optional **effects**
+(interaction) — and composited on the GPU via a fragment shader (with a CPU
+fallback so it never blanks).
 
-- `Wave` for standalone animated wave treatments.
-- `WaveScreen` for layered screen backgrounds and surface styling.
-- `WaveSkeletonizer` for geometry-aware loading states, including the tide-pool style ping-pong effect used in the example app.
+## Install
 
-## Package Exports
+```yaml
+dependencies:
+  wave_screen: ^0.1.0
+```
 
-The public entrypoint is [lib/wave_screen.dart](lib/wave_screen.dart), which exports:
+## Quick start
 
-- [lib/src/wave/wave.dart](lib/src/wave/wave.dart)
-- [lib/src/screen/screen.dart](lib/src/screen/screen.dart)
-- [lib/src/skeletonizer.dart](lib/src/skeletonizer.dart)
+Drop in a curated preset as a full-bleed background:
 
-## Run The Example Locally
+```dart
+import 'package:wave_screen/wave_screen.dart';
 
-From the repository root:
+WaveScreen(preset: WavePresets.ocean);
+```
+
+Or compose a field from raw traits:
+
+```dart
+WaveField(
+  waves: [
+    Wave(
+      shape: WaveShape.gerstner(amplitude: 0.06, frequency: 1.0, steepness: 1.1),
+      style: const WaveStyle(fill: Color(0xFF2384A0)),
+      motion: WaveMotion.drift(speed: 0.3),
+    ),
+    Wave(
+      shape: WaveShape.metaball(blobCount: 4, radius: 0.2, amplitude: 0.12),
+      style: const WaveStyle(fill: Color(0xFF57C4D6)),
+      motion: WaveMotion.pingPong(sway: 1.2, period: 6),
+    ),
+  ],
+);
+```
+
+## The trait model
+
+| Trait | Options |
+|---|---|
+| `WaveShape` | `.sine(amplitude, frequency, baseline)` · `.gerstner(…, steepness)` (sharpened ocean crests) · `.metaball(blobCount, radius, amplitude)` (gooey merging blobs) |
+| `WaveStyle` | `WaveStyle(fill: Color, opacity)` |
+| `WaveMotion` | `.drift(speed)` · `.pingPong(sway, period)` (smooth back-and-forth) · `.still()` |
+| `WaveEffect` | `PointerRippleEffect(strength, decay, speed, wavelength)` |
+
+Every shape is a pure height field: `shape.sampleAt(x, phase)` (and
+`wave.heightAt(x, t)`) returns the exact value the shader renders, so behavior is
+testable without a GPU.
+
+## Interaction
+
+Give any wave a `PointerRippleEffect` and its enclosing `WaveField` becomes
+interactive — taps and drags send ripples across the surface:
+
+```dart
+WaveField(
+  waves: [
+    Wave(
+      shape: WaveShape.sine(amplitude: 0.05, frequency: 0.9),
+      style: const WaveStyle(fill: Color(0xFF1C6E8C)),
+      motion: WaveMotion.drift(speed: 0.25),
+      effects: const [PointerRippleEffect()],
+    ),
+  ],
+  onRipple: (normalizedPosition) { /* optional */ },
+);
+```
+
+## Presets
+
+`WavePresets` ships a broad curated gallery — sine, Gerstner and metaball themes
+plus interactive presets. Access them by name:
+
+```dart
+WaveScreen(preset: WavePresets.byName['tidepool']!);
+
+for (final preset in WavePresets.all) { /* … */ }
+```
+
+Themes include `aurora`, `violet`, `dusk`, `sunset`, `neon`, `mist`, `abyss`,
+`ocean`, `lagoon`, `ember`, `jelly`, `lava`, `tidepool`, and `pulse`.
+
+## Rendering
+
+Waves render on the GPU through `shaders/wave.frag`. If the shader cannot be
+loaded (some platforms, or a stale build) the widget transparently falls back to
+an equivalent CPU painter, so the surface always shows.
+
+## Run the example
 
 ```bash
 cd example
@@ -26,18 +104,9 @@ flutter pub get
 flutter run -d chrome
 ```
 
-## GitHub Pages Example
+The example is a gallery of the milestones: **Foundation**, **Shapes**,
+**Interaction**, and the full **Preset Gallery**.
 
-The example app in [example](example) is deployed to GitHub Pages through [.github/workflows/deploy-example-pages.yml](.github/workflows/deploy-example-pages.yml).
+## License
 
-- Trigger: push to `main` or manual `workflow_dispatch`
-- Build target: `example/build/web`
-- Published URL: `https://pathverse.github.io/wave-screen/`
-
-Before the first deployment, set the repository Pages source to `GitHub Actions` in the GitHub repository settings.
-
-## Development Notes
-
-- The example depends on the local package by path, so build and deployment should always run from [example/pubspec.yaml](example/pubspec.yaml).
-- The Pages workflow passes `--base-href "/wave-screen/"` so the Flutter web build serves correctly from the repository subpath.
-
+Apache-2.0. See [LICENSE](LICENSE).
