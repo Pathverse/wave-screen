@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'pages/foundation_page.dart';
+import 'pages/gallery_page.dart';
 import 'pages/interaction_page.dart';
 import 'pages/shapes_page.dart';
 
@@ -40,5 +41,11 @@ final List<ExamplePage> examplePages = <ExamplePage>[
     icon: Icons.touch_app_outlined,
     selectedIcon: Icons.touch_app,
     builder: (_) => const InteractionPage(),
+  ),
+  ExamplePage(
+    label: 'Gallery',
+    icon: Icons.grid_view_outlined,
+    selectedIcon: Icons.grid_view,
+    builder: (_) => const GalleryPage(),
   ),
 ];
