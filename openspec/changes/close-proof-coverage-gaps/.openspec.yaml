@@ -1,4 +1,0 @@
-schema: spec-driven
-created: 2026-07-24
-goal: Every spec requirement is backed by a bound BDD journey proof or a
-  fail-first unit test
