@@ -23,3 +23,9 @@ Feature: M3 Interaction — ping-pong motion and pointer ripples
     Given the pointer ripple journey is bound to an integration proof
     When the bound integration proof is executed
     Then it passes, proving a tap and a drag each emit ripples at the normalized pointer position
+
+  @proof_quiet_field_ignores_pointers
+  Scenario: a field without a ripple effect stays inert under touch
+    Given the quiet field journey is bound to an integration proof
+    When the bound integration proof is executed
+    Then it passes, proving a field carrying no ripple effect reports nothing while an interactive one responds

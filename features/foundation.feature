@@ -24,3 +24,9 @@ Feature: M1 Foundation — composable shader-driven waves
     Given the wave screen preset journey is bound to an integration proof
     When the bound integration proof is executed
     Then it passes, proving WaveScreen renders the preset's waves across its constraints
+
+  @proof_screen_layers_child_above_waves
+  Scenario: a developer puts content on a wave screen and it sits above the waves
+    Given the screen child journey is bound to an integration proof
+    When the bound integration proof is executed
+    Then it passes, proving the child renders in front of the animated wave field

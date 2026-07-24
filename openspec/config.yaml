@@ -1,0 +1,51 @@
+schema: spec-driven
+
+context: |
+  wave_screen — composable, GPU-shader-driven animated wave surfaces for Flutter.
+
+  Tech stack: Dart / Flutter package. Public entrypoint `lib/wave_screen.dart`.
+  Rendering runs on the GPU via a bundled fragment shader (`shaders/wave.frag`,
+  declared under pubspec `flutter: shaders:`) with a CPU fallback path.
+
+  Module layout:
+    lib/src/wave/          Wave object, trait types, WaveField widget, painter
+    lib/src/wave/shader/   FragmentProgram loader + uniform packing
+    lib/src/screen/        WaveScreen widget, WaveScreenPreset, WavePresets
+    shaders/               shader source bundled as a package asset
+
+  Architecture decisions (locked at the 0.1.0 revamp, still in force):
+    - Rendering engine is a GPU fragment shader evaluating a per-pixel height
+      field. The Dart `sampleAt` model and the shader mirror each other exactly,
+      so behaviour is proven against the real Dart computation and never by
+      asserting shader pixels.
+    - The public API is maximally granular: a `Wave` is an object composed of
+      swappable traits — WaveShape (geometry), WaveStyle (appearance),
+      WaveMotion (time evolution), List<WaveEffect> (interaction/decoration).
+    - Vocabulary is fixed: Wave, WaveShape, WaveStyle, WaveMotion, WaveEffect,
+      WaveField, WaveScreen.
+    - 0.1.0 was a clean-slate breaking rewrite; no back-compatibility is kept
+      with the pre-0.1.0 API.
+    - The WaveSkeletonizer module was removed outright (no adoption), along with
+      its export, the `skeletonizer` dependency, and its example pages and tests.
+      Do not reintroduce it without an explicit decision.
+    - Rendering must never blank: shader load failure and uniform-layout
+      mismatch both degrade to the CPU path rather than throwing.
+
+  Conventions:
+    - Behaviour is proven by behave scenarios in `features/` bound to Flutter
+      tests: a scenario's `@proof_<id>` tag matches a test tagged `proof_<id>`
+      under `test/proofs/`. Specs cite those proof ids. Never prove behaviour by
+      inspecting source text.
+    - The example app is a cumulative showcase gallery — new capabilities append
+      a page, they never replace an existing showcase.
+    - Conventional commits.
+
+# Per-artifact rules (optional)
+# Add custom rules for specific artifacts.
+# Example:
+#   rules:
+#     proposal:
+#       - Keep proposals under 500 words
+#       - Always include a "Non-goals" section
+#     tasks:
+#       - Break tasks into chunks of max 2 hours
