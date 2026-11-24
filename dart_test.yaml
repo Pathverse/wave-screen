@@ -1,4 +1,8 @@
 tags:
+  proof_translucent_wave_compositing:
+  proof_ripple_shader_envelope:
+  proof_negligible_ripple_expiry:
+  proof_concurrent_shader_load:
   proof_wave_field_renders_and_animates:
   proof_wave_traits_drive_surface:
   proof_wave_screen_preset_renders:

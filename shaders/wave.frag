@@ -47,9 +47,13 @@ float rippleDisplacement(float ux) {
     }
     float age = uRipple[i].y;
     float amp = strength * exp(-decay * age);
+    if (amp < 1e-4) {
+      continue;
+    }
     float offset = abs(ux - uRipple[i].x) - (speed * age);
     float ring = cos((TWO_PI * offset) / wl);
-    float env = exp(-pow(offset / (wl * 1.5), 2.0));
+    float q = offset / (wl * 1.5);
+    float env = exp(-q * q);
     sum += amp * ring * env;
   }
   return sum;
@@ -108,7 +112,9 @@ void main() {
     float aa = 1.5 / max(uSize.y, 1.0);
     float fill = smoothstep(crest - aa, crest + aa, uv.y);
     vec4 lc = uColor[i];
-    color = mix(color, lc, lc.a * fill);
+    float alpha = lc.a * fill;
+    vec4 src = vec4(lc.rgb * alpha, alpha);
+    color = src + color * (1.0 - alpha);
   }
 
   fragColor = color;

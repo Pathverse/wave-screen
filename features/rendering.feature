@@ -3,6 +3,18 @@ Feature: Rendering output — the surface is actually visible
   I want a mounted wave surface to really paint its waves
   So that placing a WaveField gives me a visible background, not an empty box.
 
+  @proof_concurrent_shader_load
+  Scenario: concurrent fields receive the initial shader result
+    Given the concurrent shader journey is bound to an integration proof
+    When the bound integration proof is executed
+    Then it passes, proving concurrent initial requests and later requests receive the same program
+
+  @proof_translucent_wave_compositing
+  Scenario: translucent layers blend with coverage and opacity
+    Given the translucent wave journey is bound to an integration proof
+    When the bound integration proof is executed
+    Then it passes, proving transparent and overlapping layers use premultiplied source-over
+
   # Asserted against captured pixels, never internals. Note this journey does
   # not pin which path rendered: the fragment program DOES load under
   # `flutter test`, so this exercises the GPU path. The CPU fallback is driven

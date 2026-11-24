@@ -45,7 +45,13 @@ class PointerRippleEffect extends WaveEffect {
   }
 
   /// Seconds after which this ripple's amplitude is negligible.
-  double get lifetime => math.log(strength / 1e-4).clamp(0, double.infinity) / decay;
+  /// Negative and negligible strengths have zero lifetime.
+  double get lifetime {
+    if (strength <= 1e-4) {
+      return 0.0;
+    }
+    return math.log(strength / 1e-4).clamp(0, double.infinity) / decay;
+  }
 
   @override
   bool operator ==(Object other) =>

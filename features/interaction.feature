@@ -3,6 +3,18 @@ Feature: M3 Interaction — ping-pong motion and pointer ripples
   I want oscillating motion and pointer-driven ripples
   So that wave surfaces feel alive and respond to touch.
 
+  @proof_ripple_shader_envelope
+  Scenario: the shader follows finite ripple displacement across the front
+    Given the ripple shader journey is bound to an integration proof
+    When the bound integration proof is executed
+    Then it passes, proving the shader crest matches Dart behind and ahead of the ripple front
+
+  @proof_negligible_ripple_expiry
+  Scenario: negative and negligible ripples expire
+    Given the negligible ripple journey is bound to an integration proof
+    When the bound integration proof is executed
+    Then it passes, proving negative and negligible strengths have zero lifetime and are pruned
+
   # Motion and ripple math stay pure functions (computed-model proofs). The
   # pointer wiring is proven at the widget layer via an observable callback.
 

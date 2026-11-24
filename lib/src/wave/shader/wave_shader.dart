@@ -12,19 +12,15 @@ class WaveShaderLoader {
     'shaders/wave.frag',
   ];
 
-  static ui.FragmentProgram? _program;
-  static bool _attempted = false;
+  static Future<ui.FragmentProgram?>? _loadFuture;
 
   /// Attempts to load the fragment program once. Returns `null` on failure.
-  static Future<ui.FragmentProgram?> load() async {
-    if (_program != null || _attempted) {
-      return _program;
-    }
-    _attempted = true;
+  static Future<ui.FragmentProgram?> load() => _loadFuture ??= _loadProgram();
+
+  static Future<ui.FragmentProgram?> _loadProgram() async {
     for (final key in _assetKeys) {
       try {
-        _program = await ui.FragmentProgram.fromAsset(key);
-        return _program;
+        return await ui.FragmentProgram.fromAsset(key);
       } catch (_) {
         // Try the next candidate key; fall through to null on exhaustion.
       }
