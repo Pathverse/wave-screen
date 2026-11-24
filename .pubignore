@@ -1,0 +1,16 @@
+# Publish the library, declared shader assets, package metadata, and docs.
+/*
+!/lib/
+!/shaders/
+!/pubspec.yaml
+!/README.md
+!/CHANGELOG.md
+!/LICENSE
+
+# Include a runnable web example without its tests, tooling, or build output.
+!/example/
+/example/*
+!/example/lib/
+!/example/web/
+!/example/pubspec.yaml
+!/example/README.md
