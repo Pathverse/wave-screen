@@ -1,6 +1,6 @@
 name: wave_screen
 description: "Composable, GPU-shader-driven animated wave surfaces for Flutter — build a Wave from swappable shape, style, and motion traits."
-version: 0.1.0
+version: 0.2.0
 homepage: https://github.com/Pathverse/wave-screen
 repository: https://github.com/Pathverse/wave-screen
 issue_tracker: https://github.com/Pathverse/wave-screen/issues
